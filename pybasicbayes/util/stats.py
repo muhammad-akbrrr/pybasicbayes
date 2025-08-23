@@ -92,7 +92,7 @@ def update_param(oldv, newv, stepsize):
 
 
 def cov(a):
-    # return np.cov(a,rowvar=0,bias=1)
+    # return np.cov(a,rowvar=False,bias=1)
     mu = a.mean(0)
     if isinstance(a,np.ma.MaskedArray):
         return np.ma.dot(a.T,a)/a.count(0)[0] - np.ma.outer(mu,mu)
@@ -120,7 +120,7 @@ def sample_gaussian(mu=None,Sigma=None,J=None,h=None):
         return scipy.linalg.solve_triangular(L,x,lower=True,trans='T') \
             + dpotrs(L,h,lower=True)[0]
 
-def sample_truncated_gaussian(mu=0, sigma=1, lb=-np.Inf, ub=np.Inf):
+def sample_truncated_gaussian(mu=0, sigma=1, lb=-np.inf, ub=np.inf):
     """
     Sample a truncated normal with the specified params. This
     is not the most stable way but it works as long as the

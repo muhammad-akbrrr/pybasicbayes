@@ -11,7 +11,7 @@ __all__ = \
 
 import numpy as np
 from numpy import newaxis as na
-from numpy.core.umath_tests import inner1d
+# from numpy.core.umath_tests import inner1d  # Removed in NumPy 2.0
 import scipy.linalg
 import scipy.stats as stats
 import scipy.special as special
@@ -69,7 +69,7 @@ class _GaussianBase(object):
             bads = np.isnan(np.atleast_2d(x)).any(axis=1)
             x = np.nan_to_num(x).reshape((-1,D)) - mu
             xs = scipy.linalg.solve_triangular(sigma_chol,x.T,lower=True)
-            out = -1./2. * inner1d(xs.T,xs.T) - D/2*np.log(2*np.pi) \
+            out = -1./2. * np.einsum('ij,ij->i', xs.T, xs.T) - D/2*np.log(2*np.pi) \
                 - np.log(sigma_chol.diagonal()).sum()
             out[bads] = 0
             return out
@@ -362,7 +362,7 @@ class Gaussian(
 
             # see Eqs. 10.64, 10.67, and 10.71 in Bishop
             return self._loglmbdatilde()/2 - D/(2*kappa_n) - nu_n/2 * \
-                inner1d(xs.T,xs.T) - D/2*np.log(2*np.pi)
+                np.einsum('ij,ij->i', xs.T, xs.T) - D/2*np.log(2*np.pi)
         else:
             D = self.mu_mf.shape[0]
 
